@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ExpenseResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ExpenseController extends Controller
@@ -20,19 +21,19 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        return new ExpenseCollection(Expense::paginate(5));
+        return new ExpenseCollection(Expense::where('user_id', Auth::user()->id)->paginate(5));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\ExpenseRequest  $request
+     * @return \App\Http\Resources\ExpenseResource
      */
     public function store(ExpenseRequest $request)
     {
-        // $request->validated();
-        return response($request->toArray());
+        $expenses = Expense::create($request->all());
+        return new ExpenseResource($expenses);
     }
 
     /**
@@ -44,20 +45,23 @@ class ExpenseController extends Controller
     public function show(Expense $expense, Request $request)
     {
         if ($request->user()->cannot('view', $expense))
-            abort(403);
+            abort(Response::HTTP_FORBIDDEN, 'unauthorized');
         return new ExpenseResource($expense);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ExpenseRequest  $request
      * @param  \App\Models\Expense  $expense
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\ExpenseResource
      */
-    public function update(Request $request, Expense $expense)
+    public function update(ExpenseRequest $request, Expense $expense)
     {
-        //
+        if ($request->user()->cannot('update', $expense))
+            abort(Response::HTTP_FORBIDDEN, 'unauthorized');
+        $expense->update($request->all());
+        return new ExpenseResource($expense);
     }
 
     /**
@@ -66,8 +70,11 @@ class ExpenseController extends Controller
      * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Expense $expense)
+    public function destroy(Request $request, Expense $expense)
     {
-        //
+        // return response($request);
+        if ($request->user()->cannot('delete', $expense))
+            abort(Response::HTTP_FORBIDDEN, 'unauthorized');
+        return response($expense->delete());
     }
 }

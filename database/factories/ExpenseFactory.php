@@ -21,6 +21,7 @@ class ExpenseFactory extends Factory
             'description' => $this->faker->text(200),
             'amount' => $this->faker->randomFloat(2, 10, 1000),
             'user_id' => $this->faker->randomElement(User::all())['id'],
+            'date' => $this->faker->dateTimeBetween("-2 years", "now"),
         ];
     }
 }

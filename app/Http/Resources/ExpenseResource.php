@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExpenseResource extends JsonResource
@@ -20,8 +21,7 @@ class ExpenseResource extends JsonResource
             'description' => $this->description,
             'amount' => number_format((float)$this->amount, 2, '.', ''),
             'user' => new UserResource(User::findOrFail($this->user_id)),
-            'created_at' => $this->created_at->format('d-m-Y'),
-            'updated_at' => $this->updated_at->format('d-m-Y')
+            'date' => $this->date->format('d/m/Y')
         ];
     }
 }

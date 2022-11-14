@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->text('description');
             $table->double('amount');
+            $table->timestamp('date');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
