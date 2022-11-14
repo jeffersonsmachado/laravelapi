@@ -6,6 +6,8 @@ use App\Http\Requests\ExpenseRequest;
 use App\Http\Resources\ExpenseCollection;
 use App\Http\Resources\ExpenseResource;
 use App\Models\Expense;
+use App\Models\User;
+use App\Notifications\ExpenseCreated;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -47,9 +49,13 @@ class ExpenseController extends Controller
      */
     public function store(ExpenseRequest $request)
     {
-        $request->merge(['date' => Carbon::parse($request->date) ? Carbon::createFromDate($request->date) : Carbon::createFromFormat('d/m/Y H:m:s', $request->date)]);
-
-        $expense = Expense::create($request->all());
+        $request->merge([
+            'date' => Carbon::parse($request->date)
+                ? Carbon::createFromDate($request->date)
+                : Carbon::createFromFormat('d/m/Y H:m:s', $request->date)
+        ]);
+        $expense = new ExpenseResource(Expense::create($request->all()));
+        $expense->user()->first()->notify(new ExpenseCreated($expense));
         return new ExpenseResource($expense);
     }
 
