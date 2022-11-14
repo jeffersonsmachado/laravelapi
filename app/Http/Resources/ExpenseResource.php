@@ -21,7 +21,7 @@ class ExpenseResource extends JsonResource
             'description' => $this->description,
             'amount' => number_format((float)$this->amount, 2, '.', ''),
             'user' => new UserResource(User::findOrFail($this->user_id)),
-            'date' => $this->date->format('d/m/Y')
+            'date' => $this->date->format('d/m/Y H:m:s')
         ];
     }
 }

@@ -28,7 +28,7 @@ class ExpenseRequest extends FormRequest
             'description' => 'required',
             'amount' => 'required|numeric|gt:0',
             'user_id' => 'required|exists:App\Models\User,id',
-            'date' => 'required|date_format:d/m/Y|before_or_equal:' . date(DATE_ATOM)
+            'date' => 'required|date|before_or_equal:' . date(DATE_ATOM)
         ];
     }
 }

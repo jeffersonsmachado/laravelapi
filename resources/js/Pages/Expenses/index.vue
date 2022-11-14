@@ -1,8 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/inertia-vue3';
+import { Head, Link } from '@inertiajs/inertia-vue3';
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/vue/24/solid'
-import { Link } from '@inertiajs/inertia-vue3'
+import { Inertia } from '@inertiajs/inertia';
+import TextInput from '@/Components/TextInput.vue';
 
 const props = defineProps({
     expenses: {
@@ -10,6 +11,12 @@ const props = defineProps({
         default: () => ({})
     }
 });
+
+const destroy = (id) => {
+    if(confirm('Confirmar ação:')) {
+        Inertia.delete(route('expense.destroy', id))
+    }
+}
 
 </script>
 
@@ -24,16 +31,20 @@ const props = defineProps({
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="pb-6 grid grid-cols-4 align-middle content-end">
+                    <Link :href="route('expense.create')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded-full text-center" type="button">Create</Link>
+                </div>
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
-                        <div class="table">
+                        <div class="table table-fixed hover:table-auto">
                             <div class="table-header-group">
                                 <div class="table-row">
-                                    <div class="table-cell py-4 px-6 text-left">id</div>
-                                    <div class="table-cell py-4 px-6 text-left">description</div>
-                                    <div class="table-cell py-4 px-6 text-left">amount</div>
-                                    <div class="table-cell py-4 px-6 text-left">user</div>
-                                    <div class="table-cell py-4 px-6 text-left">date</div>
+                                    <div class="table-cell py-4 px-6 text-left w-1/12">id</div>
+                                    <div class="table-cell py-4 px-6 text-left w-4/12">description</div>
+                                    <div class="table-cell py-4 px-6 text-left w-1/12">amount</div>
+                                    <div class="table-cell py-4 px-6 text-left w-1/12">user</div>
+                                    <div class="table-cell py-4 px-6 text-left w-1/12">date</div>
+                                    <div class="table-cell py-4 px-6 text-left w-4/12">commands</div>
                                 </div>
                             </div>
                             <div class="table-row-group">
@@ -43,6 +54,10 @@ const props = defineProps({
                                     <div class="table-cell py-4 px-6">R${{ expense.amount }}</div>
                                     <div class="table-cell py-4 px-6">{{ expense.user.name }}</div>
                                     <div class="table-cell py-4 px-6">{{ expense.date }}</div>
+                                    <div class="table-cell py-4 px-6 grid grid-cols-2 gap-2 align-middle content-between">
+                                        <Link :href="route('expense.edit', expense.id)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded-full text-center" type="button">Editar</Link>
+                                        <Link @click="destroy(expense.id)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-1 rounded-full text-center" type="button">Delete</Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>

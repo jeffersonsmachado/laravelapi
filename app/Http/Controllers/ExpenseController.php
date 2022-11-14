@@ -6,7 +6,10 @@ use App\Http\Requests\ExpenseRequest;
 use App\Http\Resources\ExpenseCollection;
 use App\Http\Resources\ExpenseResource;
 use App\Models\Expense;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Inertia\Inertia;
 
 class ExpenseController extends Controller
@@ -18,7 +21,7 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        $expenses = new ExpenseCollection(Expense::paginate(5));
+        $expenses = new ExpenseCollection(Expense::where('user_id', Auth::user()->id)->paginate(5));
         return Inertia::render('Expenses/index',[
             'expenses' => $expenses
         ]);
@@ -31,18 +34,23 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Expenses/create');
+        return Inertia::render('Expenses/create', [
+            'user' => Auth::user()
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ExpenseRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ExpenseRequest $request)
     {
-        return response('worked', 200);
+        $request->merge(['date' => Carbon::parse($request->date) ? Carbon::createFromDate($request->date) : Carbon::createFromFormat('d/m/Y H:m:s', $request->date)]);
+
+        $expense = Expense::create($request->all());
+        return new ExpenseResource($expense);
     }
 
     /**
@@ -53,43 +61,51 @@ class ExpenseController extends Controller
      */
     public function show($id)
     {
-        $expense = new ExpenseResource(Expense::where('id', $id)->first());
-        return Inertia::render('Expenses/view',[
-            'expense' => $expense
-        ]);
+        
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function edit($id)
     {
-        //
+        $expense = new ExpenseResource(Expense::where('id', $id)->first());
+        return Inertia::render('Expenses/edit',[
+            'expense' => $expense
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ExpenseRequest  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\ExpenseResource
      */
-    public function update(Request $request, $id)
+    public function update(ExpenseRequest $request, $id)
     {
-        return response('worked', 200);
+        $expense = Expense::where('id', $id)->first();
+
+        $request->merge(['date' => Carbon::parse($request->date) ? Carbon::createFromDate($request->date) : Carbon::createFromFormat('d/m/Y H:m:s', $request->date)]);
+
+        $expense->update($request->all());
+        return new ExpenseResource($expense);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Expense $expense)
     {
-        //
+        $expense->delete();
+
+        return redirect()->route('expense.index')
+            ->with('message', 'Deleted');
     }
 }

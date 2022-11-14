@@ -10,10 +10,6 @@ Route::group([
     'as'         => 'api.',
 ], function() {
     Route::middleware('auth:sanctum')->apiResource('user', UserController::class);
-    Route::middleware('auth:sanctum')->apiResource('expense', ExpenseController::class, [
-        'names' => [
-            'update' => 'expense.update'
-        ]
-    ]);
+    Route::middleware('auth:sanctum')->apiResource('expense', ExpenseController::class);
     Route::post('login', 'App\\Http\\Controllers\\Api\\AuthController@login');
 });

@@ -20,16 +20,16 @@ const props = defineProps({
 
 
 
-// const form = useForm({
-//     'description': expense.data.description,
-//     'amount': expense.data.amount,
-//     'date': expense.data.date
-// });
-const form = useForm(props.expense.data);
+const form = useForm({
+    'description': props.expense.data.description,
+    'amount': props.expense.data.amount,
+    'date': props.expense.data.date,
+    'user_id': props.expense.data.user.id
+});
 
 
 const submit = () => {
-    form.patch(route('expense.update', 1), {
+    form.patch(route('expense.update', 14), {
         // onFinish: () => form.reset('description'),
     });
 };
@@ -39,7 +39,13 @@ const submit = () => {
 
 <template>
     <AuthenticatedLayout>
-        <Head title="New Expense" />
+        <Head title="Edit Expense" />
+
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Edit Expense
+            </h2>
+        </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -53,9 +59,9 @@ const submit = () => {
                         </div>
 
                         <div class="mt-4">
-                            <InputLabel for="description" value="Description" />
-                            <TextInput id="description" type="text" class="mt-1 block w-full" v-model="form.description" required autofocus autocomplete="description" />
-                            <InputError class="mt-2" :message="form.errors.description" />
+                            <InputLabel for="amount" value="Amount" />
+                            <TextInput id="amount" type="text" class="mt-1 block w-full" v-model="form.amount" required autofocus autocomplete="amount" />
+                            <InputError class="mt-2" :message="form.errors.amount" />
                         </div>
 
                         <div class="mt-4">
