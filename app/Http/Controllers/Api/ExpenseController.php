@@ -21,7 +21,7 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        return new ExpenseCollection(Expense::where('user_id', Auth::user()->id)->paginate(5));
+        return new ExpenseCollection(Expense::where('user_id', Auth::user()->id)->paginate(1));
     }
 
     /**
