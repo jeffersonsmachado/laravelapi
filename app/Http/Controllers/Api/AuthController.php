@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,6 +18,7 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:6'
         ];
+
         $this->messages = [
             'required' => 'The :attribute field is required',
             'min' => 'The :attribute field is too short'
@@ -36,9 +36,11 @@ class AuthController extends Controller
                     'parameters' => 'check request paremeters'
                 ]
             ], status: 422);
-        }
-         else {
+
+        } else {
+
             $credentials = request(['email', 'password']);
+
             if (!auth()->attempt($credentials)) {
                 return response()->json([
                     'message' => 'login failed',
@@ -49,12 +51,12 @@ class AuthController extends Controller
             }
     
             $user = User::where('email', $request->email)->first();
+
             $authToken = $user->createToken('auth-token')->plainTextToken;
+
             return response()->json([
                 'access_token' => $authToken
             ]);
         }
     }
 }
-
-?>

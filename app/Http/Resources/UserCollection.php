@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class UserCollection extends ResourceCollection
@@ -14,6 +15,22 @@ class UserCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'data' => $this->collection,
+            'links' => [
+                'first' => 'http =>//example.com/pagination?page=1',
+                'last' => 'http =>//example.com/pagination?page=1',
+                'prev' => $this->url(1),
+                'next' => $this->getUrlRange(1, 1)
+            ],
+            'meta' => [
+                'current_page' => $this->currentPage(),
+                'last_page' => $this->lastPage(),
+                'per_page' => $this->perPage(),
+                'total' => $this->total(),
+                'to' => $this->lastItem(),
+                'from' => $this->firstItem(),
+            ]
+        ];
     }
 }

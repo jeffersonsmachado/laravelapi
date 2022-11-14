@@ -3,16 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\Api\UserController;
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-// Route::post('/tokens/create', function (Request $request) {
-//     $token = $request->user()->createToken($request->token_name);
- 
-//     return ['token' => $token->plainTextToken];
-// });
 
 Route::group([
     'prefix'     => 'v1',
@@ -22,4 +14,5 @@ Route::group([
 ], function() {
     // Route::apiResource('expense', ExpenseController::class)->withTrashed();
     Route::post('login', 'App\\Http\\Controllers\\Api\\AuthController@login');
+    Route::middleware('auth:sanctum')->apiResource('user', UserController::class);
 });
