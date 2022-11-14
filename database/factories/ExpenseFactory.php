@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,9 @@ class ExpenseFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'description' => $this->faker->text(200),
+            'amount' => $this->faker->randomFloat(2, 10, 1000),
+            'user_id' => $this->faker->randomElement(User::all())['id'],
         ];
     }
 }

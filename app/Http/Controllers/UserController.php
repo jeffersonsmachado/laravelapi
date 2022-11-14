@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Expense;
 use Illuminate\Http\Request;
+use App\Models\User;
 
-class ExpenseController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -31,10 +31,10 @@ class ExpenseController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Expense  $expense
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(Expense $expense)
+    public function show(User $user)
     {
         //
     }
@@ -43,10 +43,10 @@ class ExpenseController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Expense  $expense
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Expense $expense)
+    public function update(Request $request, User $user)
     {
         //
     }
@@ -54,10 +54,10 @@ class ExpenseController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Expense  $expense
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Expense $expense)
+    public function destroy(User $user)
     {
         //
     }

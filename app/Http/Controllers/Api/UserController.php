@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\UserCollection;
-use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Resources\UserCollection;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 
@@ -14,13 +14,13 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\UserCollection
      */
-    public function index(Request $request)
+    public function index()
     {
         abort_if(Gate::denies('access_user'), code:Response::HTTP_FORBIDDEN);
 
-        return response((new UserCollection(User::paginate(10)))->toArray($request));
+        return new UserCollection(User::paginate(10));
     }
 
     /**
