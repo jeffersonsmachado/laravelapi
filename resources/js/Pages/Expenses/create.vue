@@ -7,18 +7,15 @@ import TextInput from '@/Components/TextInput.vue';
 import TextArea from '@/Components/TextArea.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
-
+import { Head, useForm } from '@inertiajs/inertia-vue3';
 
 const props = defineProps({
+    errors: {},
     user: {
         type: Object,
         default: () => ({})
     }
 });
-
-
 
 const form = useForm({
     'description': '',
@@ -27,13 +24,24 @@ const form = useForm({
     'user_id': props.user.id
 });
 
+form.transform( (data) => ({
+    ...data,
+    amount: data.amount.replace(/,/g, '.')
+}))
 
 const submit = () => {
     form.post(route('expense.store'), {
-        // onFinish: () => form.reset('description'),
+        onError: console.log(form),
+        // onBefore: form.amount = moneyFormat(form.amount)
     });
 };
 
+const format = (date) => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+}
 
 </script>
 
@@ -60,18 +68,19 @@ const submit = () => {
 
                         <div class="mt-4">
                             <InputLabel for="amount" value="Amount" />
-                            <TextInput id="amount" type="text" class="mt-1 block w-full" v-model="form.amount" required autofocus autocomplete="amount" />
+                            <TextInput id="amount" type="text" class="mt-1 block w-full" v-model="form.amount" required autocomplete="amount" />
                             <InputError class="mt-2" :message="form.errors.amount" />
                         </div>
 
                         <div class="mt-4">
                             <InputLabel for="date" value="Date" />
                             <div class='input-group date' id='datetimepicker'>
-                            <Datepicker v-model="form.date"></Datepicker>
+                            <Datepicker v-model="form.date" :format="format"></Datepicker>
                             <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                             </span>
                             </div>
+                            <InputError class="mt-2" :message="form.errors.date" />
                         </div>
 
                         <div class="flex items-center justify-end mt-4">

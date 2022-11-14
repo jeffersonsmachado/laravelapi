@@ -51,7 +51,7 @@ const destroy = (id) => {
                                 <div class="table-row" v-for="expense in expenses.data" :key="expense.id">
                                     <div class="table-cell py-4 px-6">{{ expense.id }}</div>
                                     <div class="table-cell py-4 px-6">{{ expense.description }}</div>
-                                    <div class="table-cell py-4 px-6">R${{ expense.amount }}</div>
+                                    <div class="table-cell py-4 px-6">R${{ expense.amount.replace(/\./g, ',') }}</div>
                                     <div class="table-cell py-4 px-6">{{ expense.user.name }}</div>
                                     <div class="table-cell py-4 px-6">{{ expense.date }}</div>
                                     <div class="table-cell py-4 px-6 grid grid-cols-2 gap-2 align-middle content-between">

@@ -6,7 +6,6 @@ use App\Http\Requests\ExpenseRequest;
 use App\Http\Resources\ExpenseCollection;
 use App\Http\Resources\ExpenseResource;
 use App\Models\Expense;
-use App\Models\User;
 use App\Notifications\ExpenseCreated;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -23,7 +22,7 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        $expenses = new ExpenseCollection(Expense::where('user_id', Auth::user()->id)->paginate(5));
+        $expenses = new ExpenseCollection(Expense::where('user_id', Auth::user()->id)->paginate(10));
         return Inertia::render('Expenses/index',[
             'expenses' => $expenses
         ]);
@@ -56,7 +55,10 @@ class ExpenseController extends Controller
         ]);
         $expense = new ExpenseResource(Expense::create($request->all()));
         $expense->user()->first()->notify(new ExpenseCreated($expense));
-        return new ExpenseResource($expense);
+        
+        return redirect()->route('expense.index')
+            ->with('message', 'expense created');
+
     }
 
     /**
@@ -76,9 +78,13 @@ class ExpenseController extends Controller
      * @param  int  $id
      * @return \Inertia\Response
      */
-    public function edit($id)
+    public function edit(Request $request, Expense $expense)
     {
-        $expense = new ExpenseResource(Expense::where('id', $id)->first());
+        if ($request->user()->cannot('edit', $expense))
+            abort(Response::HTTP_FORBIDDEN, 'unauthorized');
+        
+        $expense = new ExpenseResource(Expense::where('id', $expense->id)->first());
+
         return Inertia::render('Expenses/edit',[
             'expense' => $expense
         ]);
@@ -91,14 +97,16 @@ class ExpenseController extends Controller
      * @param  int  $id
      * @return \App\Http\Resources\ExpenseResource
      */
-    public function update(ExpenseRequest $request, $id)
+    public function update(ExpenseRequest $request, Expense $expense)
     {
-        $expense = Expense::where('id', $id)->first();
+        if ($request->user()->cannot('update', $expense))
+            abort(Response::HTTP_FORBIDDEN, 'unauthorized');
 
         $request->merge(['date' => Carbon::parse($request->date) ? Carbon::createFromDate($request->date) : Carbon::createFromFormat('d/m/Y H:m:s', $request->date)]);
 
         $expense->update($request->all());
-        return new ExpenseResource($expense);
+        return redirect()->route('expense.index')
+            ->with('message', 'Updated');
     }
 
     /**
@@ -107,8 +115,11 @@ class ExpenseController extends Controller
      * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Expense $expense)
+    public function destroy(Request $request, Expense $expense)
     {
+        if ($request->user()->cannot('delete', $expense))
+            abort(Response::HTTP_FORBIDDEN, 'unauthorized');
+
         $expense->delete();
 
         return redirect()->route('expense.index')

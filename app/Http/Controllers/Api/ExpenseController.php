@@ -10,7 +10,6 @@ use App\Http\Resources\ExpenseResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class ExpenseController extends Controller
 {
@@ -19,9 +18,11 @@ class ExpenseController extends Controller
      *
      * @return \App\Http\Resources\ExpenseCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        return new ExpenseCollection(Expense::where('user_id', Auth::user()->id)->paginate(5));
+        if ($request->user()->cannot('index'))
+            abort(Response::HTTP_FORBIDDEN, 'unauthorized');
+        return new ExpenseCollection(Expense::where('user_id', Auth::user()->id)->paginate(10));
     }
 
     /**

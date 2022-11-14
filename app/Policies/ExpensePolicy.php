@@ -18,7 +18,7 @@ class ExpensePolicy
      */
     public function viewAny(User $user)
     {
-        // return $user->id === 2;
+        //
     }
 
     /**
@@ -28,7 +28,7 @@ class ExpensePolicy
      * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Expense $expense)
+    public function edit(User $user, Expense $expense)
     {
         return $user->id === $expense->user_id;
     }
@@ -39,7 +39,7 @@ class ExpensePolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(User $user)
+    public function create(User $user, $id)
     {
         return true;
     }

@@ -7,9 +7,7 @@ import TextInput from '@/Components/TextInput.vue';
 import TextArea from '@/Components/TextArea.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
-
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
-
 
 const props = defineProps({
     expense: {
@@ -18,22 +16,21 @@ const props = defineProps({
     }
 });
 
-
-
 const form = useForm({
     'description': props.expense.data.description,
-    'amount': props.expense.data.amount,
+    'amount': props.expense.data.amount.replace(/\./g, ','),
     'date': props.expense.data.date,
     'user_id': props.expense.data.user.id
 });
 
+form.transform( (data) => ({
+    ...data,
+    amount: data.amount.replace(/,/g, '.')
+}))
 
 const submit = () => {
-    form.patch(route('expense.update', 14), {
-        // onFinish: () => form.reset('description'),
-    });
+    form.patch(route('expense.update', props.expense.data.id));
 };
-
 
 </script>
 
