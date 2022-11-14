@@ -23,6 +23,8 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
-        "@heroicons/vue": "^2.0.13"
+        "@heroicons/vue": "^2.0.13",
+        "@vuepic/vue-datepicker": "^3.5.3",
+        "vuejs3-datepicker": "^1.0.13"
     }
 }

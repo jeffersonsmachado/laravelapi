@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ExpenseRequest;
 use App\Http\Resources\ExpenseCollection;
+use App\Http\Resources\ExpenseResource;
 use App\Models\Expense;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,7 +19,7 @@ class ExpenseController extends Controller
     public function index()
     {
         $expenses = new ExpenseCollection(Expense::paginate(5));
-        return Inertia::render('Expenses',[
+        return Inertia::render('Expenses/index',[
             'expenses' => $expenses
         ]);
     }
@@ -25,11 +27,11 @@ class ExpenseController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function create()
     {
-        //
+        return Inertia::render('Expenses/create');
     }
 
     /**
@@ -40,18 +42,21 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return response('worked', 200);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function show($id)
     {
-        //
+        $expense = new ExpenseResource(Expense::where('id', $id)->first());
+        return Inertia::render('Expenses/view',[
+            'expense' => $expense
+        ]);
     }
 
     /**
@@ -74,7 +79,7 @@ class ExpenseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        return response('worked', 200);
     }
 
     /**

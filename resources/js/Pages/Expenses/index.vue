@@ -8,9 +8,7 @@ const props = defineProps({
     expenses: {
         type: Object,
         default: () => ({})
-    },
-    activePageClass: 'relative inline-flex items-center border px-4 py-2 text-sm font-medium border-indigo-500 bg-indigo-50 text-indigo-600 focus:z-20 z-10',
-    defaultPageClass: 'relative inline-flex items-center border px-4 py-2 text-sm font-medium border-gray-300 bg-white text-gray-500 hover:bg-gray-50 focus:z-20'
+    }
 });
 
 </script>
